@@ -17,13 +17,13 @@ export default function CameraFeed({ onCapture }: CameraFeedProps) {
   const webcamRef = useRef<Webcam>(null);
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [captureType, setCaptureType] = useState<CaptureType>("thumb");
-  const [error, setError] = useState<string | null>(null);
 
   const handleCapture = () => {
     if (webcamRef.current) {
       const imageSrc = webcamRef.current.getScreenshot();
       if (imageSrc) {
         onCapture(imageSrc, captureType);
+        setIsCameraOn(false);
       }
     }
   };
@@ -68,10 +68,9 @@ export default function CameraFeed({ onCapture }: CameraFeedProps) {
               videoConstraints={{ facingMode: "user" }}
             />
           ) : (
-            <span className="text-muted-foreground">Camera feed will appear here</span>
+            <span className="text-muted-foreground">Camera feed or uploaded image will appear here</span>
           )}
         </div>
-        {error && <div className="text-red-500">{error}</div>}
         <div className="flex gap-2 w-full">
           <Button
             variant="outline"

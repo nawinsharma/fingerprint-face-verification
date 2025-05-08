@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { saveUser } from "@/app/actions/saveUser"; // Import the server action
+import { saveUser } from "@/app/actions/saveUser";
+import { toast } from "sonner";
 
 interface PersonFormProps {
   faceImage?: string;
@@ -40,7 +41,9 @@ export default function PersonForm({ faceImage, thumbImage }: PersonFormProps) {
         setLastName("");
         setAddress("");
         setAdditionalInfo("");
-      } catch (err: any) {
+      } catch (err) {
+        toast.error("Failed to save.");
+        console.error(err);
         setError("Failed to save.");
       }
     });

@@ -3,8 +3,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 
-type CaptureType = "face" | "thumb";
-
 interface ImagePreviewProps {
   faceImage?: string;
   thumbImage?: string;
