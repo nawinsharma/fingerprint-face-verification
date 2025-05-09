@@ -59,7 +59,7 @@ export default function SearchPage() {
   const handleSearch = async () => {
     setLoading(true);
     setResult(null);
-    const res = await fetch("/api/search-thumb", {
+    const res = await fetch("/api/search", {
       method: "POST",
       body: JSON.stringify({ image: searchImage, type: searchType }),
       headers: { "Content-Type": "application/json" },
