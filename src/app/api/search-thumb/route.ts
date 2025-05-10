@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   if (!image || !type) return NextResponse.json({ match: false });
 
   const searchHash = await imageHash(image);
-  console.log('Search hash:', searchHash);
+  console.log('search hash :', searchHash);
   
   const hashColumn = type === "face" ? "face_hash" : "thumb_hash";
   const bucketColumn = type === "face" ? "face_hash_bucket" : "thumb_hash_bucket";
@@ -41,61 +41,33 @@ export async function POST(req: NextRequest) {
   }
 
   const searchBucket = bucketData;
-  console.log('Search bucket:', searchBucket);
-
-  // Search in the same bucket and neighboring buckets
+  console.log('Search bucket',  searchBucket);
+  
   const bucketRange = 1; // Search in current bucket and adjacent buckets
-  const { data: users, error } = await supabase
-    .from("users")
-    .select("*")
-    .not(hashColumn, "is", null)
-    .gte(bucketColumn, searchBucket - bucketRange)
-    .lte(bucketColumn, searchBucket + bucketRange);
-
-  console.log('Found users in buckets:', users?.length);
-
-  if (error) {
-    console.error('Database error:', error);
-    return NextResponse.json({ match: false });
-  }
-
-  if (!users || users.length === 0) {
-    console.log('No users found in matching buckets');
-    return NextResponse.json({ match: false });
-  }
-
-  // Calculate distances for users in matching buckets
-  let bestUser = null;
-  let bestDistance = Infinity;
   const threshold = 10;
 
-  for (const user of users) {
-    const userHash = user[hashColumn];
-    if (!userHash) continue;
+  // Use a single SQL query to get the best match by Hamming distance
+  const { data: bestMatch, error: matchError } = await supabase.rpc("find_best_match", {
+    hash_column: hashColumn,
+    bucket_column: bucketColumn,
+    search_hash: searchHash,
+    search_bucket: searchBucket,
+    bucket_range: bucketRange,
+    threshold: threshold
+  });
 
-    const { data: distanceData, error: distanceError } = await supabase.rpc("hamming_distance", {
-      hash1: searchHash,
-      hash2: userHash,
-    });
-
-    if (distanceError) {
-      console.error('Distance calculation error:', distanceError);
-      continue;
-    }
-
-    const distance = parseInt(distanceData);
-    console.log('Distance for user:', user.first_name, distance);
-
-    if (distance < bestDistance) {
-      bestDistance = distance;
-      bestUser = user;
-    }
+  if (matchError) {
+    console.error('Error finding best match:', matchError);
+    return NextResponse.json({ match: false });
   }
 
-  console.log('Best match:', bestUser?.first_name, 'Distance:', bestDistance);
+  if (!bestMatch || bestMatch.length === 0) {
+    return NextResponse.json({ match: false });
+  }
 
-  if (bestUser && bestDistance < threshold) {
-    return NextResponse.json({ match: true, user: bestUser, distance: bestDistance });
+  const user = bestMatch[0];
+  if (user.distance < threshold) {
+    return NextResponse.json({ match: true, user, distance: user.distance });
   } else {
     return NextResponse.json({ match: false });
   }

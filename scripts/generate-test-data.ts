@@ -86,7 +86,7 @@ async function generateTestData(count: number) {
 async function main() {
   try {
     // Generate test data
-    await generateTestData(100);
+    await generateTestData(800);
   } catch (error) {
     console.error("Error in test:", error);
   }
