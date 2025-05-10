@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 
 export default function SearchPage() {
   const webcamRef = useRef<Webcam>(null);
@@ -70,33 +70,37 @@ export default function SearchPage() {
   };
 
   return (
-    <main className="flex flex-col md:flex-row gap-4 p-4 min-h-screen relative bg-gradient-to-br from-slate-100 to-slate-300">
-      {/* Top bar with navigation */}
+    <main className="min-h-screen p-8 relative bg-[radial-gradient(ellipse_at_top,var(--primary)/0.1,transparent_50%)]">
       <div className="absolute top-4 right-8 z-10">
-        <Link href="/" className="inline-block">
-          <Button variant="outline">Back to Home</Button>
+        <Link href="/" className="inline-flex items-center gap-2 group">
+          <Button variant="outline" className="glass group-hover:scale-105 transition-all">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Home
+          </Button>
         </Link>
       </div>
-      {/* Loading spinner overlay */}
       {loading && (
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-          <Loader2 className="animate-spin w-16 h-16 text-primary" />
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="glass rounded-xl p-8 flex flex-col items-center gap-4">
+            <Loader2 className="animate-spin w-16 h-16 text-primary" />
+            <p className="text-white font-medium">Searching...</p>
+          </div>
         </div>
       )}
-      <div className="flex-1 flex items-center justify-center">
-        <Card className="w-full max-w-xl shadow-xl border-2 border-primary/20 bg-white/80 backdrop-blur-md">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
+        <div className="glass rounded-2xl p-8 transition-all hover:shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-primary">
               Search by Face or Thumb
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col gap-4">
+          <CardContent className="flex flex-col gap-6">
             <div className="flex justify-end">
               <Select
                 value={searchType}
                 onValueChange={(v) => setSearchType(v as "face" | "thumb")}
               >
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-32 glass">
                   <SelectValue placeholder="Select Type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -105,13 +109,13 @@ export default function SearchPage() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="w-full aspect-video bg-muted rounded-lg flex items-center justify-center relative border border-dashed border-primary/30">
+            <div className="w-full aspect-video glass rounded-xl flex items-center justify-center relative overflow-hidden">
               {isCameraOn ? (
                 <Webcam
                   audio={false}
                   ref={webcamRef}
                   screenshotFormat="image/jpeg"
-                  className="w-full h-full object-cover rounded-lg"
+                  className="w-full h-full object-cover"
                   videoConstraints={{ facingMode: "user" }}
                 />
               ) : searchImage ? (
@@ -120,7 +124,7 @@ export default function SearchPage() {
                   alt="Search Preview"
                   width={320}
                   height={180}
-                  className="object-cover w-full h-full shadow-lg rounded-lg"
+                  className="w-full h-full object-cover"
                 />
               ) : (
                 <span className="text-muted-foreground">
@@ -128,17 +132,17 @@ export default function SearchPage() {
                 </span>
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-4">
               <Button
                 variant="outline"
-                className="flex-1"
+                className="flex-1 glass hover:scale-105"
                 onClick={() => setIsCameraOn((on) => !on)}
                 disabled={!!searchImage}
               >
                 {isCameraOn ? "Stop Camera" : "Start Camera"}
               </Button>
               <Button
-                className="flex-1"
+                className="flex-1 hover:scale-105"
                 onClick={handleCapture}
                 disabled={!isCameraOn}
               >
@@ -150,9 +154,10 @@ export default function SearchPage() {
               accept="image/*"
               onChange={handleFileUpload}
               disabled={!!searchImage}
+              className="glass"
             />
             <Button
-              className="w-full font-semibold text-lg"
+              className="w-full font-semibold text-lg hover:scale-105"
               onClick={handleSearch}
               disabled={!searchImage || loading}
             >
@@ -161,7 +166,7 @@ export default function SearchPage() {
             {!isCameraOn && searchImage && (
               <Button
                 variant="secondary"
-                className="w-full"
+                className="w-full glass hover:scale-105"
                 onClick={() => {
                   setIsCameraOn(true);
                   setSearchImage(undefined);
@@ -171,55 +176,60 @@ export default function SearchPage() {
               </Button>
             )}
           </CardContent>
-        </Card>
-      </div>
-      <div className="flex-1 flex items-center justify-center">
-        {result && (
-          <Card className="w-full max-w-xl shadow-xl border-2 border-green-400/20 bg-white/80 backdrop-blur-md">
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold text-green-700">
-                Result
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {result.match ? (
-                <div>
-                  <div className="mb-2 font-semibold text-green-600 text-lg">
-                    Match Found!
+        </div>
+        <div className="h-full flex items-center justify-center">
+          {result && (
+            <Card className="w-full glass transition-all hover:shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold text-primary">
+                  Search Result
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {result.match ? (
+                  <div className="space-y-4">
+                    <div className="text-xl font-semibold text-primary">
+                      Match Found!
+                    </div>
+                    <div className="space-y-2">
+                      <p className="font-medium">
+                        Name: {result.user.first_name} {result.user.last_name}
+                      </p>
+                      <p className="font-medium">
+                        Address: {result.user.address}
+                      </p>
+                      <p className="font-medium">
+                        Additional Info: {result.user.additional_info}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="font-medium mb-2">
+                        {searchType === "face" ? "Face" : "Thumb"} Image:
+                      </p>
+                      <div className="glass rounded-lg overflow-hidden">
+                        <Image
+                          src={
+                            searchType === "face"
+                              ? result.user.face_image
+                              : result.user.thumb_image
+                          }
+                          alt="Matched"
+                          width={128}
+                          height={80}
+                          className="w-full object-cover"
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="mb-1">
-                    <b>Name:</b> {result.user.first_name}{" "}
-                    {result.user.last_name}
+                ) : (
+                  <div className="text-destructive font-semibold text-lg">
+                    No match found.
                   </div>
-                  <div className="mb-1">
-                    <b>Address:</b> {result.user.address}
-                  </div>
-                  <div className="mb-1">
-                    <b>Additional Info:</b> {result.user.additional_info}
-                  </div>
-                  <div className="mt-2">
-                    <b>{searchType === "face" ? "Face" : "Thumb"} Image:</b>
-                    <Image
-                      src={
-                        searchType === "face"
-                          ? result.user.face_image
-                          : result.user.thumb_image
-                      }
-                      alt="Matched"
-                      width={128}
-                      height={80}
-                      className="rounded border border-primary/30 mt-1"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="text-red-600 font-semibold text-lg">
-                  No match found.
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
     </main>
   );
