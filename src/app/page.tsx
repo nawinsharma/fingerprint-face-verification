@@ -28,15 +28,14 @@ export default function Home() {
         <PersonForm faceImage={faceImage} thumbImage={thumbImage} />
       </div>
       {/* Floating action button for search navigation */}
-      <Link href="/search" legacyBehavior>
-        <a
-          className="fixed bottom-8 right-8 z-50 bg-primary text-white rounded-full shadow-lg p-4 hover:bg-primary/90 transition flex items-center justify-center group"
-          title="Go to Search"
-        >
-          <Search className="w-7 h-7" />
-          <span className="sr-only">Go to Search</span>
-          <span className="absolute opacity-0 group-hover:opacity-100 bg-black text-white text-xs rounded px-2 py-1 left-[-110px] top-1/2 -translate-y-1/2 transition-opacity">Go to Search</span>
-        </a>
+      <Link
+        href="/search"
+        className="fixed bottom-8 right-8 z-50 bg-primary text-white rounded-full shadow-lg p-4 hover:bg-primary/90 transition flex items-center justify-center group"
+        title="Go to Search"
+      >
+        <Search className="w-7 h-7" />
+        <span className="sr-only">Go to Search</span>
+        <span className="absolute opacity-0 group-hover:opacity-100 bg-black text-white text-xs rounded px-2 py-1 left-[-110px] top-1/2 -translate-y-1/2 transition-opacity">Go to Search</span>
       </Link>
     </main>
   );

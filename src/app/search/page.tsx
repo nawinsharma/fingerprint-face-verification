@@ -73,7 +73,7 @@ export default function SearchPage() {
     <main className="flex flex-col md:flex-row gap-4 p-4 min-h-screen relative bg-gradient-to-br from-slate-100 to-slate-300">
       {/* Top bar with navigation */}
       <div className="absolute top-4 right-8 z-10">
-        <Link href="/">
+        <Link href="/" className="inline-block">
           <Button variant="outline">Back to Home</Button>
         </Link>
       </div>
