@@ -50,7 +50,12 @@ const SignIn: React.FC = () => {
         setError(result.error);
       } else {
         // Successfully signed in
-        navigate.push('/capture');
+        const baseUrl = process.env.NODE_ENV === 'production' 
+        ? 'https://scanly.nawin.xyz'
+        : 'http://localhost:3000';
+        
+      // Navigate to the capture page
+      navigate.push(`${baseUrl}/capture`);
       }
     } catch (err) {
       setError('An error occurred during sign in');
