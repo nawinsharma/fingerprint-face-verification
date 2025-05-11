@@ -5,12 +5,12 @@
   "description": "A web application for fingerprint verification using Next.js, Prisma, and Tailwind CSS.",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:migrate": "prisma migrate dev",
     "postinstall": "prisma generate",
+    "build": "next build",
+    "start": "next start",
     "lint": "next lint",
     "test:generate": "ts-node --project scripts/tsconfig.json scripts/generate-test-data.ts"
   },
