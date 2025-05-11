@@ -4,9 +4,9 @@ import { NextResponse } from "next/server";
 export default withAuth(
   function middleware(req) {
     if (!req.nextauth.token) {
-      const signupUrl = new URL("/signup", req.url);
-      signupUrl.searchParams.set("callbackUrl", req.url);
-      return NextResponse.redirect(signupUrl);
+      const signinUrl = new URL("/signin", req.url);
+      signinUrl.searchParams.set("callbackUrl", req.url);
+      return NextResponse.redirect(signinUrl);
     }
     return NextResponse.next();
   },

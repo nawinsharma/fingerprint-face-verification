@@ -46,6 +46,6 @@ export const authOptions: AuthOptions = {
   },
   debug: process.env.NODE_ENV !== "production",
   pages: {
-    signIn: "/signup",
+    signIn: "/signin",
   },
 }
