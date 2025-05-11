@@ -132,7 +132,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/nawin/fingerprint-verification/src/generated/prisma",
+      "value": "/home/nawin/Documents/fingerprint-face-verification/src/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -146,7 +146,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/nawin/fingerprint-verification/prisma/schema.prisma",
+    "sourceFilePath": "/home/nawin/Documents/fingerprint-face-verification/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
