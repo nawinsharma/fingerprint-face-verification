@@ -1,11 +1,7 @@
 "use server";
 
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
 import sharp from "sharp";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function imageHash(base64: string) {
   const buffer = Buffer.from(base64.split(",")[1], "base64");
