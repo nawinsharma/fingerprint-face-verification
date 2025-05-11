@@ -1,10 +1,24 @@
 "use server";
 
 import { createClient } from "@supabase/supabase-js";
+import sharp from "sharp";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
+
+async function imageHash(base64: string) {
+  const buffer = Buffer.from(base64.split(",")[1], "base64");
+  const resized = await sharp(buffer).resize(8, 8).grayscale().raw().toBuffer();
+  // Simple average hash: each pixel > mean is 1, else 0
+  const mean = resized.reduce((a, b) => a + b, 0) / resized.length;
+  let hash = "";
+  for (const pixel of resized) {
+    hash += pixel > mean ? "1" : "0";
+  }
+  // Pad to 64 bits if needed
+  return hash.padStart(64, "0");
+}
 
 export async function saveUser({
   firstName,
@@ -21,6 +35,12 @@ export async function saveUser({
   faceImage?: string;
   thumbImage?: string;
 }) {
+  // Compute hashes if images are provided
+  const faceHash = faceImage ? await imageHash(faceImage) : null;
+  const thumbHash = thumbImage ? await imageHash(thumbImage) : null;
+
+  console.log('Generated hashes:', { faceHash, thumbHash });
+
   const { data, error } = await supabase.from("users").insert([
     {
       first_name: firstName,
@@ -29,8 +49,13 @@ export async function saveUser({
       additional_info: additionalInfo,
       face_image: faceImage,
       thumb_image: thumbImage,
+      face_hash: faceHash,
+      thumb_hash: thumbHash,
     },
   ]);
-  if (error) throw error;
+  if (error) {
+    console.error('Error saving user:', error);
+    throw error;
+  }
   return data;
 }
