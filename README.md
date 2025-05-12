@@ -245,7 +245,7 @@ Be sure to set your Supabase credentials in the `.env` file as described above.
 
 ## Author
 
-- **Nawin** - *Initial work* - [GitHub Profile](https://github.com/nawin)
+- **Nawin** - [Profile](https://nawin.xyz)
 
 ---
 
