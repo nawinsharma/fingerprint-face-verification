@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 const signInSchema = z.object({
@@ -21,7 +21,8 @@ const signInSchema = z.object({
 type SignInFormValues = z.infer<typeof signInSchema>;
 
 const SignIn: React.FC = () => {
-  const navigate = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/capture';
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,28 +40,21 @@ const SignIn: React.FC = () => {
     setError(null);
     
     try {
-      // Use NextAuth's signIn method
+      // Use NextAuth's signIn method with the callbackUrl
       const result = await signIn('credentials', {
-        redirect: false,
+        redirect: true,
+        callbackUrl,
         email: values.email,
         password: values.password,
       });
       
       if (result?.error) {
         setError(result.error);
-      } else {
-        // Successfully signed in
-        const baseUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://scanly.nawin.xyz'
-        : 'http://localhost:3000';
-        
-      // Navigate to the capture page
-      navigate.push(`${baseUrl}/capture`);
+        setIsSubmitting(false);
       }
     } catch (err) {
       setError('An error occurred during sign in');
       console.error(err);
-    } finally {
       setIsSubmitting(false);
     }
   };
