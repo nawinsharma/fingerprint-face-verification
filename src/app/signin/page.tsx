@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { signIn } from 'next-auth/react'; // Import from next-auth
 import AuthCard from '@/components/auth/AuthCard';
@@ -20,7 +20,7 @@ const signInSchema = z.object({
 
 type SignInFormValues = z.infer<typeof signInSchema>;
 
-const SignIn: React.FC = () => {
+const SignInContent: React.FC = () => {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/capture';
   const [showPassword, setShowPassword] = useState(false);
@@ -163,6 +163,21 @@ const SignIn: React.FC = () => {
         </div>
       </AuthCard>
     </div>
+  );
+};
+
+const SignIn: React.FC = () => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+        <div className="animate-pulse">
+          <div className="h-8 w-48 bg-muted rounded mb-4"></div>
+          <div className="h-4 w-32 bg-muted rounded"></div>
+        </div>
+      </div>
+    }>
+      <SignInContent />
+    </Suspense>
   );
 };
 
